@@ -9,17 +9,27 @@ import {
     NavigationMenuTrigger,
     NavigationMenuViewport,
   } from "@/components/ui/navigation-menu"
+import { useSession } from 'next-auth/react';
+import LoginBtn from './login-btn';
   
 
 export default function Navbar() {
+  const { data: session } = useSession();
   return (
     <div className='fixed flex top-0 justify-end w-full'>
         <NavigationMenu>
             <NavigationMenuList>
-                <NavigationMenuItem>
+                <NavigationMenuItem className='mr-8'>
                 <NavigationMenuTrigger>UsernamePH</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                    <NavigationMenuLink>Link to the profile</NavigationMenuLink>
+                <NavigationMenuContent className='p-8 min-w-24'>
+                  {session ? (
+                          <h1>Welcome, {session.user.name}</h1>
+                        ) : (
+                          <div>
+                            <h1>Please log in</h1>
+                            <LoginBtn />
+                          </div>
+                        )}
                     <NavigationMenuLink>Logout</NavigationMenuLink>
                 </NavigationMenuContent>
                 </NavigationMenuItem>
