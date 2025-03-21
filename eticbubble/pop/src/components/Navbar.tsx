@@ -1,42 +1,19 @@
-'use client'
+import React from "react";
+import { auth } from "@/server/auth";
+import { UserMenu } from "./UserMenu";
+import { NavMenu } from "./NavMenu";
 
-import React from 'react'
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuIndicator,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    NavigationMenuViewport,
-  } from "@/components/ui/navigation-menu"
-// import { useSession } from 'next-auth/react';
-// import LoginBtn from './login-btn';
-  
+export default async function Navbar() {
+  const session = await auth();
 
-export default function Navbar() {
-  // const { data: session } = useSession();
   return (
-    <div className='fixed flex top-0 justify-end w-full'>
-        <NavigationMenu>
-            <NavigationMenuList>
-                <NavigationMenuItem className='mr-8'>
-                <NavigationMenuTrigger>UsernamePH</NavigationMenuTrigger>
-                <NavigationMenuContent className='p-8 min-w-24'>
-                  {/* {session ? (
-                          <h1>Welcome, {session.user.name}</h1>
-                        ) : (
-                          <div>
-                            <h1>Please log in</h1>
-                            <LoginBtn />
-                          </div>
-                        )} */}
-                    <NavigationMenuLink>Logout</NavigationMenuLink>
-                </NavigationMenuContent>
-                </NavigationMenuItem>
-            </NavigationMenuList>
-        </NavigationMenu>
+    <div className="border-b">
+      <div className="flex h-16 items-center px-4">
+        <NavMenu />
+        <div className="ml-auto flex items-center space-x-4">
+          <UserMenu session={session} />
+        </div>
+      </div>
     </div>
-  )
+  );
 }

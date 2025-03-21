@@ -1,31 +1,25 @@
-// import LoginBtn from "@/components/login-btn";
 import Navbar from "@/components/Navbar";
 import Pool from "@/components/Pool";
 import PostButton from "@/components/PostButton";
-// import { api } from "@/trpc/server";
-// import type { Session } from "next-auth";
+import { api } from "@/trpc/server";
 import { HydrateClient } from "@/trpc/server";
+import { auth } from "@/server/auth";
 
 export default async function Home() {
+  const session = await auth();
 
-  // if (session?.user) {
-  //   void api.post.getLatest.prefetch();
-  // }
+  if (session?.user) {
+    void api.post.getLatest.prefetch();
+  }
 
   return (
     <HydrateClient>
       <div>
-        {/* {session ? (
-          <h1>Welcome, {session.user.name}</h1>
-        ) : (
-          <div>
-            <h1>Please log in</h1>
-            <LoginBtn />
-          </div>
-        )} */}
-        <Pool />
         <Navbar />
-        <PostButton />
+        <main className="container mx-auto px-4 py-8">
+          <Pool />
+          <PostButton />
+        </main>
       </div>
     </HydrateClient>
   );
