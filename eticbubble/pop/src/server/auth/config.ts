@@ -48,7 +48,8 @@ export const authConfig = {
           access_type: "offline",
           response_type: "code"
         }
-      }
+      },
+      allowDangerousEmailAccountLinking: true
     }),
     GitHubProvider({
       clientId: env.AUTH_GITHUB_ID,
