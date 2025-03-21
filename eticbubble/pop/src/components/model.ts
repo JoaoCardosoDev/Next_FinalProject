@@ -1,18 +1,28 @@
 export interface User {
+    id: string
+    name: string | null
+    email: string | null
+}
+
+export interface Favorite {
     id: number
-    name: string
-    email: string
+    createdAt: Date
+    userId: string
+    postId: number
 }
 
 export interface Post {
     id: number
-    // owner: User
     title: string
     body: string
-    up: number
-    down: number
-    score: number
-    // comments: Comment[]
+    published: boolean
+    createdAt: Date
+    updatedAt: Date
+    createdBy: User
+    createdById: string
+    favoritedBy: Favorite[]
+    isFavorited?: boolean
+    favoriteCount: number
 }
 
 export interface Comment {
@@ -24,27 +34,24 @@ export interface Comment {
 }
 
 export class PostPool {
-    posts:[];
+    posts: Post[];
 
     constructor() {
         this.posts = []; 
     }
 
-    async fetchPosts(): Promise<[]> { 
-            const response = await fetch('https://dummyjson.com/posts');
+    async fetchPosts(): Promise<Post[]> { 
+        try {
+            const response = await fetch('/api/posts');
+            if (!response.ok) {
+                throw new Error('Failed to fetch posts');
+            }
             const data = await response.json();
-
-            this.posts = data.posts.map((post: any) => ({
-                id: post.id,
-                title: post.title,
-                body: post.body,
-                up: post.reactions.likes,
-                down: post.reactions.dislikes,
-                score: (post.reactions.likes - post.reactions.dislikes)
-            }));
-
-            this.posts.sort((a, b) => b.score - a.score);
-
-            return this.posts; 
+            this.posts = data;
+            return this.posts;
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+            return [];
+        }
     }
 }
