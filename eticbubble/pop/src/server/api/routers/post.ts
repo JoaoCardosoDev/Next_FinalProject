@@ -16,11 +16,15 @@ export const postRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(z.object({ 
+      title: z.string().min(1),
+      body: z.string().min(1)
+    }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.post.create({
         data: {
-          name: input.name,
+          title: input.title,
+          body: input.body,
           createdBy: { connect: { id: ctx.session.user.id } },
         },
       });
@@ -30,6 +34,19 @@ export const postRouter = createTRPCRouter({
     const post = await ctx.db.post.findFirst({
       orderBy: { createdAt: "desc" },
       where: { createdBy: { id: ctx.session.user.id } },
+      select: {
+        id: true,
+        title: true,
+        body: true,
+        published: true,
+        createdAt: true,
+        updatedAt: true,
+        createdBy: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     return post ?? null;
