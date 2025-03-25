@@ -18,7 +18,11 @@ export interface Post {
     published: boolean
     createdAt: Date
     updatedAt: Date
-    createdBy: User
+    createdBy: {
+        name: string | null
+        image: string | null
+        instagram?: string | null
+    }
     createdById: string
     favoritedBy: Favorite[]
     isFavorited?: boolean
