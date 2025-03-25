@@ -4,6 +4,7 @@ import PostButton from "@/components/PostButton";
 import { api } from "@/trpc/server";
 import { HydrateClient } from "@/trpc/server";
 import { auth } from "@/server/auth";
+import { PostProvider } from "@/contexts/PostContext";
 
 export default async function Home() {
   const session = await auth();
@@ -14,13 +15,15 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <div>
-        <Navbar />
-        <main className="container mx-auto px-4 py-8">
-          <Pool />
-          <PostButton />
-        </main>
-      </div>
+      <PostProvider>
+        <div>
+          <Navbar />
+          <main className="container mx-auto px-4 py-8">
+            {session && <PostButton />}
+            <Pool />
+          </main>
+        </div>
+      </PostProvider>
     </HydrateClient>
   );
 }

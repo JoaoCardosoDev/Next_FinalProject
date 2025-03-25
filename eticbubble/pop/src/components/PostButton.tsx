@@ -1,39 +1,133 @@
-import React from 'react'
+"use client";
+
+import React, { useState, useEffect } from "react";
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-  } from "@/components/ui/drawer"
-import { Button } from './ui/button'
-import { Textarea } from "@/components/ui/textarea"
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "./ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { usePostContext } from "@/contexts/PostContext";
+import { useSession } from "next-auth/react";
 
 export default function PostButton() {
-  return (
-    <div className='fixed bottom-0 flex justify-end w-full p-2'>
-        <Drawer>
-            <DrawerTrigger>Post</DrawerTrigger>
-            <DrawerContent>
-                <DrawerHeader>
-                <DrawerTitle>Create a new Post</DrawerTitle>
-                <DrawerDescription>Please refrain to the TOS when posting.</DrawerDescription>
-                </DrawerHeader>
-                <div className='px-4'>
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [postCount, setPostCount] = useState(0);
+  const router = useRouter();
+  const { refreshPosts, setRefreshPostCount } = usePostContext();
+  const { data: session } = useSession();
 
-                <Textarea className='max-w-full'/>
-                </div>
-                <DrawerFooter>
-                <Button>Post</Button>
-                    <DrawerClose className='bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0'>
-                        Cancel
-                    </DrawerClose>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
+  const fetchPostCount = async () => {
+    if (!session?.user) return;
+    try {
+      const response = await fetch("/api/posts");
+      const posts = await response.json();
+      const userPosts = posts.filter(
+        (post: Post) => post.createdById === session.user.id,
+      );
+      setPostCount(userPosts.length);
+    } catch (error) {
+      console.error("Error fetching post count:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPostCount();
+    setRefreshPostCount(() => fetchPostCount);
+  }, [session, setRefreshPostCount]);
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, body }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error);
+        return;
+      }
+
+      setTitle("");
+      setBody("");
+      setIsOpen(false);
+
+      // Update post count and refresh posts
+      await fetchPostCount();
+      if (refreshPosts) {
+        refreshPosts();
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert("Failed to create post");
+    }
+  };
+
+  return (
+    <div className="mb-8">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {postCount}/10 posts created
+        </p>
+      </div>
+      <Drawer open={isOpen} onOpenChange={setIsOpen}>
+        <DrawerTrigger asChild>
+          <Button className="w-full" size="lg" disabled={postCount >= 10}>
+            {postCount >= 10 ? "Post limit reached" : "Share your thought"}
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div className="mx-auto w-full max-w-sm">
+            <DrawerHeader>
+              <DrawerTitle>Create a new thought</DrawerTitle>
+              <DrawerDescription>
+                Share your shower thought with the world.
+              </DrawerDescription>
+            </DrawerHeader>
+            <div className="px-4">
+              <div className="flex flex-col gap-4">
+                <Input
+                  placeholder="Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+                <Textarea
+                  placeholder="What's on your mind?"
+                  className="min-h-[100px]"
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                />
+              </div>
+            </div>
+            <DrawerFooter>
+              <Button
+                onClick={handleSubmit}
+                disabled={postCount >= 10 || !title.trim() || !body.trim()}
+              >
+                {postCount >= 10 ? "Post limit reached" : "Post"}
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
-  )
+  );
 }

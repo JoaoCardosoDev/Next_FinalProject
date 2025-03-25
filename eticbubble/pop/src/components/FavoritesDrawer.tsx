@@ -12,7 +12,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
+import { Star, Trash2 } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -21,16 +21,30 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import type { Post } from "./model";
+import { useSession } from "next-auth/react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface FavoritesDrawerProps {
   favorites: Post[];
   onUnfavorite: (postId: number) => Promise<void>;
+  deletePost: (postId: number) => Promise<void>;
 }
 
 export default function FavoritesDrawer({
   favorites,
   onUnfavorite,
+  deletePost,
 }: FavoritesDrawerProps) {
+  const { data: session } = useSession();
+
   return (
     <div className="fixed bottom-4 right-4">
       <Drawer>
@@ -57,7 +71,7 @@ export default function FavoritesDrawer({
                   </p>
                 ) : (
                   favorites.map((post) => (
-                    <Card key={post.id} className="w-[300px] flex-shrink-0">
+                    <Card key={post.id} className="w-[300px] flex-shrink-0 relative">
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div>
@@ -68,19 +82,56 @@ export default function FavoritesDrawer({
                               By {post.createdBy.name || "Anonymous"}
                             </CardDescription>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onUnfavorite(post.id)}
-                            className="text-yellow-500"
-                          >
-                            <Star className="h-5 w-5" fill="currentColor" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onUnfavorite(post.id)}
+                              className="text-yellow-500"
+                            >
+                              <Star className="h-5 w-5" fill="currentColor" />
+                            </Button>
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent>
                         <p className="line-clamp-3">{post.body}</p>
                       </CardContent>
+
+                      {session && session.user.id === post.createdById && (
+                        <div className="absolute bottom-2 right-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500 hover:bg-red-100 hover:text-red-600"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Delete Thought</DialogTitle>
+                                <DialogDescription>
+                                  Are you sure you want to delete this thought? This action cannot be undone.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
+                                <Button variant="ghost">
+                                  Cancel
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  onClick={() => deletePost(post.id)}
+                                >
+                                  Delete
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      )}
                     </Card>
                   ))
                 )}
