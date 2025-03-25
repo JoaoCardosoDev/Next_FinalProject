@@ -11,28 +11,60 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
+import { Star, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import FavoritesDrawer from "./FavoritesDrawer";
+import { usePostContext } from "@/contexts/PostContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useSearchParams } from "next/navigation";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { User } from "lucide-react";
 
 export default function Pool() {
   const [posts, setPosts] = useState<Post[]>([]);
   const { data: session } = useSession();
-  const favorites = posts.filter((post) => post.isFavorited);
-  const unfavoritedPosts = posts.filter((post) => !post.isFavorited);
+  const searchParams = useSearchParams();
+  const showUserPostsOnly = searchParams.get("userPosts") === "true";
+  const { setRefreshPosts, refreshPostCount } = usePostContext();
+  const [postToDelete, setPostToDelete] = useState<number | null>(null);
+  const [selectedUser, setSelectedUser] = useState<{
+    id: string;
+    name: string | null;
+  } | null>(null);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+
+  const filteredPosts =
+    showUserPostsOnly && session?.user?.id
+      ? posts.filter((post) => post.createdById === session.user.id)
+      : posts;
+
+  const favorites = filteredPosts.filter((post) => post.isFavorited);
+  const unfavoritedPosts = filteredPosts.filter((post) => !post.isFavorited);
 
   useEffect(() => {
-    const pool = new PostPool();
-    pool.fetchPosts().then((fetchedPosts) => {
-      // Sort posts by favorite count in descending order
+    const fetchPosts = async () => {
+      const pool = new PostPool();
+      const fetchedPosts = await pool.fetchPosts();
       const sortedPosts = [...fetchedPosts].sort(
         (a, b) =>
           b.favoriteCount - a.favoriteCount ||
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
       setPosts(sortedPosts);
-    });
-  }, []);
+    };
+
+    fetchPosts();
+    setRefreshPosts(() => fetchPosts);
+  }, [setRefreshPosts]);
 
   const toggleFavorite = async (postId: number) => {
     try {
@@ -73,18 +105,93 @@ export default function Pool() {
     }
   };
 
+  const deletePost = async (postId: number) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert(error.error || "Failed to delete post");
+        return;
+      }
+
+      // Remove the post from state
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+
+      // Refresh the post count in PostButton
+      if (refreshPostCount) {
+        refreshPostCount();
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("Failed to delete post");
+    }
+  };
+
+  const fetchUserPosts = async (userId: string) => {
+    try {
+      const response = await fetch("/api/posts");
+      const allPosts = await response.json();
+      const filteredPosts = allPosts
+        .filter((post: Post) => post.createdById === userId)
+        .sort(
+          (a: Post, b: Post) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+      setUserPosts(filteredPosts);
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+    }
+  };
+
+  const handleUserClick = async (userId: string, userName: string | null) => {
+    setSelectedUser({ id: userId, name: userName });
+    await fetchUserPosts(userId);
+    setIsUserModalOpen(true);
+  };
+
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 p-32 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {unfavoritedPosts.map((post) => (
-          <Card key={post.id}>
+          <Card key={post.id} className="relative">
             <CardHeader className="relative">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1">
-                  <CardTitle>{post.title}</CardTitle>
-                  <CardDescription>
-                    By {post.createdBy.name || "Anonymous"}
-                  </CardDescription>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-1 items-start gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={post.createdBy.image ?? ""}
+                      alt={post.createdBy.name ?? "Anonymous"}
+                    />
+                    <AvatarFallback>
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="space-y-1">
+                    <CardTitle>{post.title}</CardTitle>
+                    <div className="space-y-1">
+                      <CardDescription>
+                        By {post.createdBy.name || "Anonymous"}
+                      </CardDescription>
+                      {post.createdBy.instagram &&
+                        post.createdBy.showInstagram && (
+                          <a
+                            href={post.createdBy.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-500 hover:underline"
+                          >
+                            @
+                            {post.createdBy.instagram
+                              .split("/")
+                              .pop()
+                              ?.replace(/\/$/, "")}
+                          </a>
+                        )}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   {session && (
@@ -117,12 +224,134 @@ export default function Pool() {
                 Posted on {new Date(post.createdAt).toLocaleDateString()}
               </p>
             </CardFooter>
+
+            {session && session.user.id === post.createdById && (
+              <div className="absolute bottom-2 right-2">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:bg-red-100 hover:text-red-600"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Delete Thought</DialogTitle>
+                      <DialogDescription>
+                        Are you sure you want to delete this thought? This
+                        action cannot be undone.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          const dialogElement =
+                            document.querySelector('[role="dialog"]');
+                          if (dialogElement) {
+                            const closeButton = dialogElement.querySelector(
+                              '[data-state="closed"]',
+                            );
+                            if (closeButton instanceof HTMLElement) {
+                              closeButton.click();
+                            }
+                          }
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          deletePost(post.id);
+                          const dialogElement =
+                            document.querySelector('[role="dialog"]');
+                          if (dialogElement) {
+                            const closeButton = dialogElement.querySelector(
+                              '[data-state="closed"]',
+                            );
+                            if (closeButton instanceof HTMLElement) {
+                              closeButton.click();
+                            }
+                          }
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </Card>
         ))}
       </div>
       {session && (
-        <FavoritesDrawer favorites={favorites} onUnfavorite={toggleFavorite} />
+        <FavoritesDrawer
+          favorites={favorites}
+          onUnfavorite={toggleFavorite}
+          deletePost={deletePost}
+        />
       )}
+      <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={userPosts[0]?.createdBy.image ?? ""}
+                  alt={selectedUser?.name ?? "Anonymous"}
+                />
+                <AvatarFallback>
+                  <User className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <DialogTitle className="text-xl font-bold">
+                  {selectedUser?.name || "Anonymous"}'s Thoughts
+                </DialogTitle>
+                <DialogDescription>
+                  All thoughts shared by this user
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          <div className="grid gap-4">
+            {userPosts.map((post) => (
+              <Card key={post.id}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="line-clamp-1">
+                        {post.title}
+                      </CardTitle>
+                      <CardDescription>
+                        Posted on{" "}
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Star
+                        className="h-4 w-4"
+                        fill={post.isFavorited ? "currentColor" : "none"}
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        {post.favoriteCount}
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p>{post.body}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

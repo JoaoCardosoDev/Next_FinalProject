@@ -55,6 +55,8 @@ model User {
   email         String?    @unique
   emailVerified DateTime?
   image         String?
+  instagram     String?
+  showInstagram Boolean    @default(false)
   accounts      Account[]
   favorites     Favorite[]
   posts         Post[]
