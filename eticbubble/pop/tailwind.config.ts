@@ -8,9 +8,9 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'var(--font-geist-sans)',
-                    ...fontFamily.sans
-                ]
+  				'manifold-cf',
+  				...fontFamily.sans
+  			]
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -18,35 +18,33 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
+  			clarity: "#f3ffff",
+  			protocol: "#afcbd6",
+  			system: "#79a6b9",
+  			membrane: "#beb780",
+  			sector: "#20464f",
+  			archive: "#0e1a26",
+  			background: "#f3ffff",
+  			foreground: "#20464f",
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
+  				DEFAULT: "#afcbd6",
+  				foreground: "#20464f",
+  			},
+  			card: {
+  				DEFAULT: "#f3ffff",
+  				foreground: "#20464f",
   			},
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+  				DEFAULT: "#beb780",
+  				foreground: "#0e1a26",
   			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
+  			primary: {
+  				DEFAULT: "#20464f",
+  				foreground: "#f3ffff",
+  			},
+  			secondary: {
+  				DEFAULT: "#79a6b9",
+  				foreground: "#0e1a26",
   			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
