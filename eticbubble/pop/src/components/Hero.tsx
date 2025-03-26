@@ -4,9 +4,12 @@ import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
 import { Lightbulb, Droplets, Lock } from "lucide-react";
 import { Logo } from "./Logo";
+import { useCountAnimation } from "@/hooks/useCountAnimation";
 
 export default function Hero() {
   const { data: session } = useSession();
+  const thoughtCount = useCountAnimation(10, 1500);
+  const favoriteCount = useCountAnimation(5, 1500);
 
   return (
     <section
@@ -42,11 +45,15 @@ export default function Hero() {
 
           <div className="hidden items-center gap-6 border-l border-protocol pl-8 sm:flex">
             <div className="text-center">
-              <h3 className="mb-1 text-2xl font-semibold text-sector">10</h3>
+              <h3 className="mb-1 text-2xl font-semibold text-sector">
+                {thoughtCount}
+              </h3>
               <p className="text-sm text-system">Thoughts</p>
             </div>
             <div className="text-center">
-              <h3 className="mb-1 text-2xl font-semibold text-sector">5</h3>
+              <h3 className="mb-1 text-2xl font-semibold text-sector">
+                {favoriteCount}
+              </h3>
               <p className="text-sm text-system">Favorites</p>
             </div>
           </div>

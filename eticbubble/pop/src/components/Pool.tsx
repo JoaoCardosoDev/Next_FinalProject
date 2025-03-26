@@ -27,7 +27,8 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
-import UserPostsModal from "./UserPostsModal";
+import { useUserPosts } from "@/contexts/UserPostsContext";
+import { cn } from "@/lib/utils";
 
 export default function Pool() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -36,15 +37,9 @@ export default function Pool() {
   const showUserPostsOnly = searchParams.get("userPosts") === "true";
   const { setRefreshPosts, refreshPostCount } = usePostContext();
   const [postToDelete, setPostToDelete] = useState<number | null>(null);
-  const [selectedUser, setSelectedUser] = useState<{
-    id: string;
-    name: string | null;
-    image: string | null;
-    instagram: string | null;
-    showInstagram: boolean;
-  } | null>(null);
-  const [userPosts, setUserPosts] = useState<Post[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { openUserPosts } = useUserPosts();
+  const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
+  const [animationOrder, setAnimationOrder] = useState<number[]>([]);
 
   const filteredPosts =
     showUserPostsOnly && session?.user?.id
@@ -69,6 +64,48 @@ export default function Pool() {
     fetchPosts();
     setRefreshPosts(() => fetchPosts);
   }, [setRefreshPosts]);
+
+  useEffect(() => {
+    let animationTimeout: NodeJS.Timeout;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const newlyVisibleCards: string[] = [];
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.target instanceof HTMLElement) {
+            const cardId = entry.target.getAttribute("data-card-id");
+            if (cardId) {
+              newlyVisibleCards.push(cardId);
+            }
+          }
+        });
+
+        if (newlyVisibleCards.length > 0) {
+          // Stagger the animations
+          newlyVisibleCards.forEach((cardId, index) => {
+            animationTimeout = setTimeout(() => {
+              setVisibleCards((prev) => new Set([...prev, cardId]));
+            }, index * 100); // 100ms delay between each card
+          });
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "50px",
+      },
+    );
+
+    // Find all cards and observe them
+    const cards = document.querySelectorAll("[data-card-id]");
+    cards.forEach((card) => observer.observe(card));
+
+    return () => {
+      observer.disconnect();
+      if (animationTimeout) {
+        clearTimeout(animationTimeout);
+      }
+    };
+  }, [unfavoritedPosts]);
 
   const toggleFavorite = async (postId: number) => {
     try {
@@ -134,32 +171,25 @@ export default function Pool() {
     }
   };
 
-  const handleUserClick = async (userId: string, userProfile: any) => {
-    try {
-      const response = await fetch("/api/posts");
-      const allPosts = await response.json();
-      const filteredPosts = allPosts.filter(
-        (post: Post) => post.createdById === userId
-      );
-      setUserPosts(filteredPosts);
-      setSelectedUser({
-        id: userId,
-        name: userProfile.name,
-        image: userProfile.image,
-        instagram: userProfile.instagram,
-        showInstagram: userProfile.showInstagram
-      });
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching user posts:", error);
-    }
+  const handleUserClick = (userId: string, userProfile: any) => {
+    openUserPosts(userId, userProfile);
   };
 
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {unfavoritedPosts.map((post) => (
-          <Card key={post.id} className="relative">
+          <Card
+            key={post.id}
+            data-card-id={post.id.toString()}
+            className={cn(
+              "relative",
+              "transition-all duration-500 ease-out",
+              visibleCards.has(post.id.toString())
+                ? "translate-y-0 opacity-100"
+                : "translate-y-10 opacity-0",
+            )}
+          >
             <CardHeader className="relative">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-1 items-start gap-3">
@@ -179,7 +209,9 @@ export default function Pool() {
                         By{" "}
                         <span
                           className="cursor-pointer hover:underline"
-                          onClick={() => handleUserClick(post.createdById, post.createdBy)}
+                          onClick={() =>
+                            handleUserClick(post.createdById, post.createdBy)
+                          }
                         >
                           {post.createdBy.name || "Anonymous"}
                         </span>
@@ -303,17 +335,6 @@ export default function Pool() {
           favorites={favorites}
           onUnfavorite={toggleFavorite}
           deletePost={deletePost}
-        />
-      )}
-      {selectedUser && (
-        <UserPostsModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          userPosts={userPosts}
-          userProfile={selectedUser}
-          onFavorite={toggleFavorite}
-          onDelete={deletePost}
-          currentUserId={session?.user?.id}
         />
       )}
     </>

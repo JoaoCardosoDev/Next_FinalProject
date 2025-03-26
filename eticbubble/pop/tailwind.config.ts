@@ -56,7 +56,13 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+  		transitionProperty: {
+  			'all': 'all',
+  		},
+  		transitionDuration: {
+  			'700': '700ms',
+  		},
   	}
   },
   plugins: [require("tailwindcss-animate")],
