@@ -4,7 +4,10 @@ import Image from "next/image";
 
 export function Logo() {
   return (
-    <div className="inline-flex h-8 w-10 items-center justify-center rounded-lg bg-sector p-2.5">
+    <div
+      data-testid="logo-container"
+      className="inline-flex h-8 w-10 items-center justify-center rounded-lg bg-sector p-2.5"
+    >
       <Image
         src="/waterdrop.svg"
         alt="Water Drop Logo"
