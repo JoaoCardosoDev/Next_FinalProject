@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Logo } from "./Logo";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -12,7 +13,10 @@ import {
 export function NavMenu() {
   return (
     <NavigationMenu>
-      <NavigationMenuList>
+      <NavigationMenuList className="flex items-center gap-4">
+        <NavigationMenuItem>
+          <Logo />
+        </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
