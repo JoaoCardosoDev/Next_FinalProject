@@ -14,12 +14,27 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageCircle, Github, User } from "lucide-react";
 import type { Session } from "next-auth";
+import { useUserPosts } from "@/contexts/UserPostsContext";
 
 interface UserMenuProps {
   session: Session | null;
 }
 
 export function UserMenu({ session }: UserMenuProps) {
+  const { openUserPosts } = useUserPosts();
+
+  const handleProfileClick = () => {
+    if (session?.user) {
+      openUserPosts(session.user.id, {
+        id: session.user.id,
+        name: session.user.name,
+        image: session.user.image,
+        instagram: session.user.instagram ?? null,
+        showInstagram: session.user.showInstagram ?? false,
+      });
+    }
+  };
+
   if (!session?.user) {
     return (
       <div className="flex items-center gap-4">
@@ -87,7 +102,12 @@ export function UserMenu({ session }: UserMenuProps) {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent 
+        align="end" 
+        forceMount
+        sideOffset={8}
+        className="z-50 w-56 bg-background border rounded-md shadow-md"
+      >
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
@@ -99,17 +119,11 @@ export function UserMenu({ session }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/profile">Profile</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">Settings</Link>
+        <DropdownMenuItem onClick={handleProfileClick}>
+          Profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => void signOut()}
-          className="cursor-pointer"
-        >
+        <DropdownMenuItem onClick={() => void signOut()}>
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

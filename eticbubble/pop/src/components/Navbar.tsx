@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useUserPosts } from "@/contexts/UserPostsContext";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -31,6 +33,7 @@ export default function Navbar() {
     session?.user?.showInstagram ?? false,
   );
   const [error, setError] = useState("");
+  const { openUserPosts } = useUserPosts();
 
   useEffect(() => {
     if (session?.user) {
@@ -140,6 +143,18 @@ export default function Navbar() {
       }
     } catch (error) {
       setError("Failed to remove Instagram link");
+    }
+  };
+
+  const handleProfileClick = () => {
+    if (session?.user) {
+      openUserPosts(session.user.id, {
+        id: session.user.id,
+        name: session.user.name,
+        image: session.user.image,
+        instagram: session.user.instagram ?? null,
+        showInstagram: session.user.showInstagram ?? false,
+      });
     }
   };
 
