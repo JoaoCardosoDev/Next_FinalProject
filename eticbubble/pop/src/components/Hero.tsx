@@ -9,9 +9,12 @@ export default function Hero() {
   const { data: session } = useSession();
 
   return (
-    <div className="relative overflow-hidden border-b border-protocol bg-clarity py-8 sm:py-12">
+    <section
+      aria-label="Introduction"
+      className="relative overflow-hidden border-b border-protocol bg-clarity py-8 sm:py-12"
+    >
       <div className="mx-auto max-w-3xl px-4">
-        <div className="flex items-center justify-between">
+        <header className="flex items-center justify-between">
           <div className="max-w-xl">
             <h1 className="mb-3 text-3xl font-bold tracking-tight text-sector sm:text-4xl">
               Where Fleeting Thoughts Find Their Voice
@@ -47,8 +50,8 @@ export default function Hero() {
               <p className="text-sm text-system">Favorites</p>
             </div>
           </div>
-        </div>
+        </header>
       </div>
-    </div>
+    </section>
   );
 }
