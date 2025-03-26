@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Pool from "@/components/Pool";
 import PostButton from "@/components/PostButton";
+import Hero from "@/components/Hero";
 import { api } from "@/trpc/server";
 import { HydrateClient } from "@/trpc/server";
 import { auth } from "@/server/auth";
@@ -18,6 +19,7 @@ export default async function Home() {
       <PostProvider>
         <div>
           <Navbar />
+          <Hero />
           <main className="container mx-auto px-4 py-8">
             {session && <PostButton />}
             <Pool />
