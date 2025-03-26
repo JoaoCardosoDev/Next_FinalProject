@@ -27,6 +27,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+import UserPostsModal from "./UserPostsModal";
 
 export default function Pool() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -38,9 +39,12 @@ export default function Pool() {
   const [selectedUser, setSelectedUser] = useState<{
     id: string;
     name: string | null;
+    image: string | null;
+    instagram: string | null;
+    showInstagram: boolean;
   } | null>(null);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
-  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredPosts =
     showUserPostsOnly && session?.user?.id
@@ -130,26 +134,25 @@ export default function Pool() {
     }
   };
 
-  const fetchUserPosts = async (userId: string) => {
+  const handleUserClick = async (userId: string, userProfile: any) => {
     try {
       const response = await fetch("/api/posts");
       const allPosts = await response.json();
-      const filteredPosts = allPosts
-        .filter((post: Post) => post.createdById === userId)
-        .sort(
-          (a: Post, b: Post) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
+      const filteredPosts = allPosts.filter(
+        (post: Post) => post.createdById === userId
+      );
       setUserPosts(filteredPosts);
+      setSelectedUser({
+        id: userId,
+        name: userProfile.name,
+        image: userProfile.image,
+        instagram: userProfile.instagram,
+        showInstagram: userProfile.showInstagram
+      });
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching user posts:", error);
     }
-  };
-
-  const handleUserClick = async (userId: string, userName: string | null) => {
-    setSelectedUser({ id: userId, name: userName });
-    await fetchUserPosts(userId);
-    setIsUserModalOpen(true);
   };
 
   return (
@@ -173,7 +176,13 @@ export default function Pool() {
                     <CardTitle>{post.title}</CardTitle>
                     <div className="space-y-1">
                       <CardDescription>
-                        By {post.createdBy.name || "Anonymous"}
+                        By{" "}
+                        <span
+                          className="cursor-pointer hover:underline"
+                          onClick={() => handleUserClick(post.createdById, post.createdBy)}
+                        >
+                          {post.createdBy.name || "Anonymous"}
+                        </span>
                       </CardDescription>
                       {post.createdBy.instagram &&
                         post.createdBy.showInstagram && (
@@ -296,62 +305,17 @@ export default function Pool() {
           deletePost={deletePost}
         />
       )}
-      <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
-        <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  src={userPosts[0]?.createdBy.image ?? ""}
-                  alt={selectedUser?.name ?? "Anonymous"}
-                />
-                <AvatarFallback>
-                  <User className="h-5 w-5" />
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <DialogTitle className="text-xl font-bold">
-                  {selectedUser?.name || "Anonymous"}'s Thoughts
-                </DialogTitle>
-                <DialogDescription>
-                  All thoughts shared by this user
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-          <div className="grid gap-4">
-            {userPosts.map((post) => (
-              <Card key={post.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="line-clamp-1">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription>
-                        Posted on{" "}
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star
-                        className="h-4 w-4"
-                        fill={post.isFavorited ? "currentColor" : "none"}
-                      />
-                      <span className="text-xs text-muted-foreground">
-                        {post.favoriteCount}
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p>{post.body}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {selectedUser && (
+        <UserPostsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          userPosts={userPosts}
+          userProfile={selectedUser}
+          onFavorite={toggleFavorite}
+          onDelete={deletePost}
+          currentUserId={session?.user?.id}
+        />
+      )}
     </>
   );
 }
