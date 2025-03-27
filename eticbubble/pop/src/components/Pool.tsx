@@ -213,11 +213,13 @@ export default function Pool() {
                             handleUserClick(post.createdById, post.createdBy)
                           }
                         >
-                          {post.createdBy.name || "Anonymous"}
+                          {post.createdBy.name ?? "Anonymous"}
                         </span>
                       </CardDescription>
                       {post.createdBy.instagram &&
-                        post.createdBy.showInstagram && (
+                        ("showInstagram" in post.createdBy
+                          ? (post.createdBy.showInstagram as boolean)
+                          : true) && (
                           <a
                             href={post.createdBy.instagram}
                             target="_blank"
@@ -307,7 +309,7 @@ export default function Pool() {
                       <Button
                         variant="destructive"
                         onClick={() => {
-                          deletePost(post.id);
+                          void deletePost(post.id);
                           const dialogElement =
                             document.querySelector('[role="dialog"]');
                           if (dialogElement) {

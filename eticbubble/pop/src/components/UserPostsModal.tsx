@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Card,
@@ -47,6 +48,7 @@ export default function UserPostsModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="sr-only">User Profile</DialogTitle>
           <div className="flex items-start gap-4">
             <Avatar className="h-16 w-16">
               {userProfile.image ? (

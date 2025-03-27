@@ -42,7 +42,10 @@ export default function PostButton() {
   };
 
   useEffect(() => {
-    fetchPostCount();
+    const fetchData = async () => {
+      await fetchPostCount();
+    };
+    void fetchData();
     setRefreshPostCount(() => fetchPostCount);
   }, [session, setRefreshPostCount]);
 
@@ -70,7 +73,7 @@ export default function PostButton() {
       // Update post count and refresh posts
       await fetchPostCount();
       if (refreshPosts) {
-        refreshPosts();
+        void refreshPosts();
       }
     } catch (error) {
       console.error("Error creating post:", error);

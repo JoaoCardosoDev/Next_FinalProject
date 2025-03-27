@@ -82,7 +82,7 @@ describe("UserMenu Component", () => {
       expires: "1",
     };
 
-    render(<UserMenu session={mockSession} />);
+    render(<UserMenu session={mockSession as any} />);
     expect(screen.getByText("Test User")).toBeInTheDocument();
   });
 
@@ -96,7 +96,7 @@ describe("UserMenu Component", () => {
       expires: "1",
     };
 
-    render(<UserMenu session={mockSession} />);
+    render(<UserMenu session={mockSession as any} />);
     expect(screen.getByText("Test User")).toBeInTheDocument();
     expect(screen.getByText("test@example.com")).toBeInTheDocument();
   });
@@ -111,7 +111,7 @@ describe("UserMenu Component", () => {
       expires: "1",
     };
 
-    render(<UserMenu session={mockSession} />);
+    render(<UserMenu session={mockSession as any} />);
     const logoutButton = screen.getByText(/log out/i);
     await fireEvent.click(logoutButton);
     expect(mockSignOut).toHaveBeenCalled();
