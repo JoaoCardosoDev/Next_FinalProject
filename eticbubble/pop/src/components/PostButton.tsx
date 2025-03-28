@@ -105,16 +105,31 @@ export default function PostButton() {
             <div className="px-4">
               <div className="flex flex-col gap-4">
                 <Input
-                  placeholder="Title"
+                  placeholder="Title (max 60 characters)"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 60) {
+                      setTitle(e.target.value);
+                    }
+                  }}
+                  maxLength={60}
                 />
-                <Textarea
-                  placeholder="What's on your mind?"
-                  className="min-h-[100px]"
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                />
+                <div className="space-y-1">
+                  <Textarea
+                    placeholder="What's on your mind? (max 200 characters)"
+                    className="min-h-[100px]"
+                    value={body}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 200) {
+                        setBody(e.target.value);
+                      }
+                    }}
+                    maxLength={200}
+                  />
+                  <p className="text-xs text-muted-foreground text-right">
+                    {body.length}/200 characters
+                  </p>
+                </div>
               </div>
             </div>
             <DrawerFooter>
