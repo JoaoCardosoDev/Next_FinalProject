@@ -259,8 +259,13 @@ export default function Pool() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <p>{post.body}</p>
+            <CardContent className="max-h-[200px] overflow-y-auto">
+              <div className="space-y-2">
+                <h3 className="break-words text-lg font-semibold">
+                  {post.title}
+                </h3>
+                <p className="break-words text-sm text-gray-600">{post.body}</p>
+              </div>
             </CardContent>
             <CardFooter>
               <p className="text-sm text-gray-500">
