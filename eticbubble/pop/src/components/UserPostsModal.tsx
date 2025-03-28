@@ -47,12 +47,15 @@ export default function UserPostsModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-[600px]">
-        <DialogHeader className="pb-4 border-b">
+        <DialogHeader className="border-b pb-4">
           <DialogTitle className="sr-only">User Profile</DialogTitle>
           <div className="flex items-start gap-4">
             <Avatar className="h-16 w-16">
               {userProfile.image ? (
-                <AvatarImage src={userProfile.image} alt={userProfile.name || ""} />
+                <AvatarImage
+                  src={userProfile.image}
+                  alt={userProfile.name || ""}
+                />
               ) : (
                 <AvatarFallback>
                   <User className="h-8 w-8" />
@@ -63,9 +66,10 @@ export default function UserPostsModal({
               <h2 className="text-2xl font-bold">
                 {userProfile.name || "Anonymous"}
               </h2>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="mt-2 flex items-center gap-2">
                 <p className="text-muted-foreground">
-                  {userPosts.length} thought{userPosts.length !== 1 ? "s" : ""} shared
+                  {userPosts.length} thought{userPosts.length !== 1 ? "s" : ""}{" "}
+                  shared
                 </p>
                 {userProfile.showInstagram && userProfile.instagram && (
                   <div className="flex items-center gap-1 text-blue-500">
@@ -75,7 +79,7 @@ export default function UserPostsModal({
                       href={userProfile.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline text-sm"
+                      className="text-sm hover:underline"
                     >
                       Instagram Profile
                     </a>
@@ -86,24 +90,29 @@ export default function UserPostsModal({
           </div>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 mt-4">
+        <div className="mt-4 flex flex-col gap-4 overflow-hidden">
           {userPosts.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
+            <p className="py-8 text-center text-muted-foreground">
               No thoughts shared yet
             </p>
           ) : (
             userPosts.map((post) => (
-              <Card key={post.id}>
+              <Card key={post.id} className="max-w-full">
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="line-clamp-1">{post.title}</CardTitle>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="break-words line-clamp-1">
+                        {post.title}
+                      </CardTitle>
                       <CardDescription>
-                        {new Date(post.createdAt).toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        {new Date(post.createdAt).toLocaleDateString(
+                          undefined,
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
                       </CardDescription>
                     </div>
                     <div className="flex gap-2">
@@ -141,10 +150,11 @@ export default function UserPostsModal({
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-wrap">{post.body}</p>
+                  <p className="break-words text-sm text-gray-600">{post.body}</p>
                   {post.favoriteCount > 0 && (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      ★ {post.favoriteCount} favorite{post.favoriteCount !== 1 ? "s" : ""}
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      ★ {post.favoriteCount} favorite
+                      {post.favoriteCount !== 1 ? "s" : ""}
                     </p>
                   )}
                 </CardContent>
