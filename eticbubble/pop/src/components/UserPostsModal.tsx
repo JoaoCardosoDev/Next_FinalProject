@@ -100,8 +100,8 @@ export default function UserPostsModal({
               <Card key={post.id} className="max-w-full">
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="break-words line-clamp-1">
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="line-clamp-1 break-words">
                         {post.title}
                       </CardTitle>
                       <CardDescription>
@@ -150,7 +150,9 @@ export default function UserPostsModal({
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="break-words text-sm text-gray-600">{post.body}</p>
+                  <p className="break-words text-sm text-gray-600">
+                    {post.body}
+                  </p>
                   {post.favoriteCount > 0 && (
                     <p className="mt-2 text-sm text-muted-foreground">
                       ★ {post.favoriteCount} favorite
