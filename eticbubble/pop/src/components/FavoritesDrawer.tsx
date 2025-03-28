@@ -49,7 +49,10 @@ export default function FavoritesDrawer({
     <div className="fixed bottom-4 right-4">
       <Drawer>
         <DrawerTrigger asChild>
-          <Button variant="outline" className="gap-2">
+          <Button
+            variant="outline"
+            className="gap-2 bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
+          >
             <Star className="h-4 w-4" fill="currentColor" />
             Favorites ({favorites.length}/5)
           </Button>
@@ -71,7 +74,10 @@ export default function FavoritesDrawer({
                   </p>
                 ) : (
                   favorites.map((post) => (
-                    <Card key={post.id} className="w-[300px] flex-shrink-0 relative">
+                    <Card
+                      key={post.id}
+                      className="relative w-[300px] flex-shrink-0"
+                    >
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div>
@@ -87,7 +93,7 @@ export default function FavoritesDrawer({
                               variant="ghost"
                               size="icon"
                               onClick={() => onUnfavorite(post.id)}
-                              className="text-yellow-500"
+                              className="text-accent hover:text-accent/90"
                             >
                               <Star className="h-5 w-5" fill="currentColor" />
                             </Button>
@@ -105,7 +111,7 @@ export default function FavoritesDrawer({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-red-500 hover:bg-red-100 hover:text-red-600"
+                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                               >
                                 <Trash2 className="h-5 w-5" />
                               </Button>
@@ -114,13 +120,12 @@ export default function FavoritesDrawer({
                               <DialogHeader>
                                 <DialogTitle>Delete Thought</DialogTitle>
                                 <DialogDescription>
-                                  Are you sure you want to delete this thought? This action cannot be undone.
+                                  Are you sure you want to delete this thought?
+                                  This action cannot be undone.
                                 </DialogDescription>
                               </DialogHeader>
                               <DialogFooter>
-                                <Button variant="ghost">
-                                  Cancel
-                                </Button>
+                                <Button variant="ghost">Cancel</Button>
                                 <Button
                                   variant="destructive"
                                   onClick={() => deletePost(post.id)}
@@ -139,7 +144,12 @@ export default function FavoritesDrawer({
             </div>
             <DrawerFooter>
               <DrawerClose asChild>
-                <Button variant="outline">Close</Button>
+                <Button
+                  variant="outline"
+                  className="bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  Close
+                </Button>
               </DrawerClose>
             </DrawerFooter>
           </div>

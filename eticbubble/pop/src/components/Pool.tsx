@@ -243,8 +243,10 @@ export default function Pool() {
                       size="icon"
                       onClick={() => toggleFavorite(post.id)}
                       className={`${
-                        post.isFavorited ? "text-yellow-500" : "text-gray-500"
-                      } relative z-50 h-9 w-9`}
+                        post.isFavorited
+                          ? "text-accent"
+                          : "text-muted-foreground"
+                      } relative z-50 h-9 w-9 hover:text-accent`}
                     >
                       <Star
                         className="h-5 w-5"

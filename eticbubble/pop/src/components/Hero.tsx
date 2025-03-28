@@ -14,12 +14,12 @@ export default function Hero() {
   return (
     <section
       aria-label="Introduction"
-      className="relative overflow-hidden border-b border-protocol bg-clarity py-8 sm:py-12"
+      className="relative overflow-hidden border-b bg-background py-8 sm:py-12"
     >
       <div className="mx-auto max-w-3xl px-4">
         <header className="flex items-center justify-between">
           <div className="max-w-xl">
-            <h1 className="mb-3 text-3xl font-bold tracking-tight text-sector sm:text-4xl">
+            <h1 className="mb-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Where Fleeting Thoughts Find Their Voice
             </h1>
             <p className="mb-4 text-base text-muted-foreground sm:text-lg">
@@ -31,30 +31,30 @@ export default function Hero() {
               {!session && (
                 <Button
                   size="lg"
-                  className="bg-membrane text-archive hover:bg-membrane/90"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
                 >
                   Start Sharing Thoughts
                 </Button>
               )}
-              <div className="flex items-center gap-2 text-system">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <Lock className="h-4 w-4" />
                 <span className="text-sm">10 thoughts limit</span>
               </div>
             </div>
           </div>
 
-          <div className="hidden items-center gap-6 border-l border-protocol pl-8 sm:flex">
+          <div className="hidden items-center gap-6 border-l border-border pl-8 sm:flex">
             <div className="text-center">
-              <h3 className="mb-1 text-2xl font-semibold text-sector">
+              <h3 className="mb-1 text-2xl font-semibold text-foreground">
                 {thoughtCount}
               </h3>
-              <p className="text-sm text-system">Thoughts</p>
+              <p className="text-sm text-muted-foreground">Thoughts</p>
             </div>
             <div className="text-center">
-              <h3 className="mb-1 text-2xl font-semibold text-sector">
+              <h3 className="mb-1 text-2xl font-semibold text-foreground">
                 {favoriteCount}
               </h3>
-              <p className="text-sm text-system">Favorites</p>
+              <p className="text-sm text-muted-foreground">Favorites</p>
             </div>
           </div>
         </header>

@@ -7,6 +7,8 @@ import { NavMenu } from "./NavMenu";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +26,7 @@ export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { theme, setTheme } = useTheme();
   const showUserPostsOnly = searchParams.get("userPosts") === "true";
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [instagramLink, setInstagramLink] = useState(
@@ -163,6 +166,17 @@ export default function Navbar() {
       <div className="flex h-16 items-center px-4">
         <NavMenu />
         <div className="flex flex-1 items-center justify-end gap-4">
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          </div>
           {session && (
             <>
               <div className="flex items-center space-x-2">

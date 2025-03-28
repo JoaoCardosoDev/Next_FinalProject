@@ -90,15 +90,21 @@ export default function PostButton() {
       </div>
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
-          <Button className="w-full" size="lg" disabled={postCount >= 10}>
+          <Button
+            className="w-full dark:bg-accent dark:text-accent-foreground dark:hover:bg-accent/90"
+            size="lg"
+            disabled={postCount >= 10}
+          >
             {postCount >= 10 ? "Post limit reached" : "Share your thought"}
           </Button>
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent className="bg-background">
           <div className="mx-auto w-full max-w-sm">
             <DrawerHeader>
-              <DrawerTitle>Create a new thought</DrawerTitle>
-              <DrawerDescription>
+              <DrawerTitle className="text-foreground">
+                Create a new thought
+              </DrawerTitle>
+              <DrawerDescription className="text-muted-foreground">
                 Share your shower thought with the world.
               </DrawerDescription>
             </DrawerHeader>
@@ -108,10 +114,11 @@ export default function PostButton() {
                   placeholder="Title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  className="bg-background text-foreground"
                 />
                 <Textarea
                   placeholder="What's on your mind?"
-                  className="min-h-[100px]"
+                  className="min-h-[100px] bg-background text-foreground"
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                 />
@@ -121,6 +128,7 @@ export default function PostButton() {
               <Button
                 onClick={handleSubmit}
                 disabled={postCount >= 10 || !title.trim() || !body.trim()}
+                className="dark:bg-accent dark:text-accent-foreground dark:hover:bg-accent/90"
               >
                 {postCount >= 10 ? "Post limit reached" : "Post"}
               </Button>
