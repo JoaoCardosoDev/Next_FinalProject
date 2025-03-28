@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Star, User, Instagram } from "lucide-react";
+import { Star, User, Instagram, Trash2 } from "lucide-react";
 import type { Post } from "./model";
 
 interface UserPostsModalProps {
@@ -127,23 +127,14 @@ export default function UserPostsModal({
                           fill={post.isFavorited ? "currentColor" : "none"}
                         />
                       </Button>
-                      {currentUserId === userProfile.id && onDelete && (
+                      {currentUserId === post.createdById && (
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => onDelete(post.id)}
                           className="text-red-500 hover:text-red-700"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
-                          </svg>
+                          <Trash2 className="h-5 w-5" />
                         </Button>
                       )}
                     </div>
