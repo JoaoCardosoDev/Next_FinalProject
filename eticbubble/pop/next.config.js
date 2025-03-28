@@ -18,6 +18,18 @@ const config = {
     // your project has ESLint errors
     ignoreDuringBuilds: true,
   },
+  // Add production domain configuration
+  images: {
+    domains: ['bubbleup.pt', 'www.bubbleup.pt'],
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://www.bubbleup.pt/api/:path*',
+      },
+    ];
+  },
 };
 
 export default config;
