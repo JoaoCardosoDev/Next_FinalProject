@@ -51,11 +51,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/rmm2lvr.css" />
       </head>
-      <body>
+      <body className="min-h-screen bg-background">
         <Providers>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </Providers>
