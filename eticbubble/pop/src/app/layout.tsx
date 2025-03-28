@@ -7,32 +7,33 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://your-domain.com'),
+  metadataBase: new URL("https://www.bubbleup.pt"),
   title: "Shower Thoughts | Where Fleeting Ideas Find Their Voice",
-  description: "Share your most profound shower thoughts in a space where scarcity breeds creativity. Limited to 10 thoughts per user, making each one count.",
-  keywords: "shower thoughts, ideas, creativity, social platform, thoughts sharing, ephemeral content, limited posts",
-  authors: [{ name: "Your Name", url: "https://your-domain.com" }],
-  creator: "Your Name",
+  description:
+    "Share your most profound shower thoughts in a space where scarcity breeds creativity. Limited to 10 thoughts per user, making each one count.",
+  keywords:
+    "shower thoughts, ideas, creativity, social platform, thoughts sharing, ephemeral content, limited posts",
+  authors: [{ name: "JoaoCardosoDev", url: "https://www.bubbleup.pt" }],
+  creator: "JoaoCardosoDev",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://your-domain.com",
+    url: "https://www.bubbleup.pt",
     title: "Shower Thoughts | Where Fleeting Ideas Find Their Voice",
-    description: "Share your most profound shower thoughts in a space where scarcity breeds creativity. Limited to 10 thoughts per user, making each one count.",
+    description:
+      "Share your most profound shower thoughts in a space where scarcity breeds creativity. Limited to 10 thoughts per user, making each one count.",
     siteName: "Shower Thoughts",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://www.bubbleup.pt/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Shower Thoughts Platform",
+        alt: "Bubble Up - Where Fleeting Ideas Find Their Voice",
         type: "image/jpeg",
       },
     ],
   },
-  icons: [
-    { rel: "icon", type: "image/svg+xml", url: "/favicon.svg" },
-  ],
+  icons: [{ rel: "icon", type: "image/svg+xml", url: "/favicon.svg" }],
   manifest: "/site.webmanifest",
 };
 
