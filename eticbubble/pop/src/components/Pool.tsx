@@ -263,9 +263,6 @@ export default function Pool() {
             </CardHeader>
             <CardContent className="max-h-[200px] overflow-y-auto">
               <div className="space-y-2">
-                <h3 className="line-clamp-2 break-words text-lg font-semibold">
-                  {post.title}
-                </h3>
                 <p className="break-words text-sm text-gray-600">{post.body}</p>
               </div>
             </CardContent>
