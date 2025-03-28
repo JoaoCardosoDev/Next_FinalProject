@@ -12,9 +12,16 @@ export const metadata: Metadata = {
   description:
     "Share your most profound shower thoughts in a space where scarcity breeds creativity. Limited to 10 thoughts per user, making each one count.",
   keywords:
-    "shower thoughts, ideas, creativity, social platform, thoughts sharing, ephemeral content, limited posts",
+    "shower thoughts, ideas, creativity, social platform, thoughts sharing, social media, limited posts",
   authors: [{ name: "JoaoCardosoDev", url: "https://www.bubbleup.pt" }],
   creator: "JoaoCardosoDev",
+  alternates: {
+    canonical: "https://www.bubbleup.pt",
+    languages: {
+      en: "https://www.bubbleup.pt",
+      "en-US": "https://www.bubbleup.pt",
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
