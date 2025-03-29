@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, Github, User } from "lucide-react";
+import { MessageCircle, Github, User, LogIn } from "lucide-react";
 import type { Session } from "next-auth";
 import { useUserPosts } from "@/contexts/UserPostsContext";
 
@@ -37,23 +37,26 @@ export function UserMenu({ session }: UserMenuProps) {
 
   if (!session?.user) {
     return (
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-muted-foreground">
-          Welcome, you can login with
-        </span>
-        <div className="flex gap-2">
-          <Button
-            onClick={() => void signIn("discord")}
-            className="bg-[#5865F2] text-white hover:bg-[#4752C4]"
-          >
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Discord
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <LogIn className="h-5 w-5" />
           </Button>
-
-          <Button
-            onClick={() => void signIn("google")}
-            className="border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
-          >
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56 bg-background border rounded-md shadow-md">
+          <DropdownMenuLabel className="font-normal">
+            Welcome, you can login with
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => void signIn("discord")}>
+            <MessageCircle className="mr-2 h-4 w-4" />
+            Sign in with Discord
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => void signIn("github")}>
+            <Github className="mr-2 h-4 w-4" />
+            Sign in with GitHub
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => void signIn("google")}>
             <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -72,18 +75,20 @@ export function UserMenu({ session }: UserMenuProps) {
                 fill="#EA4335"
               />
             </svg>
-            Google
-          </Button>
-
-          <Button
-            onClick={() => void signIn("github")}
-            className="bg-[#24292F] text-white hover:bg-[#1C2024]"
-          >
-            <Github className="mr-2 h-4 w-4" />
-            GitHub
-          </Button>
-        </div>
-      </div>
+            Sign in with Google
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/about" className="w-full">About</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/terms" className="w-full">Terms</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/privacy" className="w-full">Privacy</Link>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 
@@ -102,11 +107,11 @@ export function UserMenu({ session }: UserMenuProps) {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
+      <DropdownMenuContent
+        align="end"
         forceMount
         sideOffset={8}
-        className="z-50 w-56 bg-background border rounded-md shadow-md"
+        className="z-50 w-56 rounded-md border bg-background shadow-md"
       >
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
@@ -121,6 +126,16 @@ export function UserMenu({ session }: UserMenuProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleProfileClick}>
           Profile
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/about" className="w-full">About</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/terms" className="w-full">Terms</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/privacy" className="w-full">Privacy</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => void signOut()}>

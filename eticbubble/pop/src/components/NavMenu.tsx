@@ -24,7 +24,6 @@ export function NavMenu() {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        {/* Add more navigation items here */}
       </NavigationMenuList>
     </NavigationMenu>
   );
