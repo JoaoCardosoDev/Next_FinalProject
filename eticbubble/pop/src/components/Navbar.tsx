@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "./UserMenu";
 import { NavMenu } from "./NavMenu";
@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { useUserPosts } from "@/contexts/UserPostsContext";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
-export default function Navbar() {
+function NavbarContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -162,10 +162,10 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 w-full items-center justify-between px-4 sm:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-2xl items-center">
         <NavMenu />
-        <div className="flex items-center gap-2">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           <Button
             variant="ghost"
             size="icon"
@@ -265,5 +265,13 @@ export default function Navbar() {
         </DialogContent>
       </Dialog>
     </header>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <Suspense>
+      <NavbarContent />
+    </Suspense>
   );
 }

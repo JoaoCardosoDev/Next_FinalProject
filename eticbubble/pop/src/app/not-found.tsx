@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center">
-      <Suspense>
+    <Suspense>
+      <div className="container flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center">
         <div className="flex flex-col items-center space-y-4 text-center">
           <h1 className="text-4xl font-bold">404 - Page Not Found</h1>
           <p className="text-muted-foreground">
@@ -15,7 +15,7 @@ export default function NotFound() {
             <Link href="/">Return Home</Link>
           </Button>
         </div>
-      </Suspense>
-    </div>
+      </div>
+    </Suspense>
   );
 }
