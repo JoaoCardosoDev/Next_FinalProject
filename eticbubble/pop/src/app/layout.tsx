@@ -8,6 +8,11 @@ import { env } from "@/env";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Providers } from "@/components/Providers";
+import Navbar from "@/components/Navbar";
+import { PostProvider } from "@/contexts/PostContext";
+import { UserPostsProvider } from "@/contexts/UserPostsContext";
+import { Footer } from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.bubbleup.pt"),
@@ -49,20 +54,29 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/rmm2lvr.css" />
       </head>
       <body className="min-h-screen bg-background">
-        <Providers>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-        </Providers>
+        <TRPCReactProvider>
+          <Providers>
+            <PostProvider>
+              <UserPostsProvider>
+                <div className="flex min-h-screen flex-col">
+                  <Navbar />
+                  <div className="flex-1">{children}</div>
+                  <Footer />
+                  <CookieConsent />
+                </div>
+              </UserPostsProvider>
+            </PostProvider>
+          </Providers>
+        </TRPCReactProvider>
         <Analytics />
         <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_ID} />
       </body>
