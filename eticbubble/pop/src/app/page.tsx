@@ -1,19 +1,14 @@
-import Navbar from "@/components/Navbar";
+import { auth } from "@/server/auth";
+import Hero from "@/components/Hero";
 import Pool from "@/components/Pool";
 import PostButton from "@/components/PostButton";
-import Hero from "@/components/Hero";
-import { api } from "@/trpc/server";
-import { HydrateClient } from "@/trpc/server";
-import { auth } from "@/server/auth";
+import UserPostsToggle from "@/components/UserPostsToggle";
 import { PostProvider } from "@/contexts/PostContext";
 import { UserPostsProvider } from "@/contexts/UserPostsContext";
+import { HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
   const session = await auth();
-
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
 
   return (
     <HydrateClient>
@@ -22,7 +17,12 @@ export default async function Home() {
           <div>
             <Hero />
             <main className="container mx-auto px-4 py-8">
-              {session && <PostButton />}
+              {session && (
+                <>
+                  <PostButton />
+                  <UserPostsToggle />
+                </>
+              )}
               <Pool />
             </main>
           </div>
