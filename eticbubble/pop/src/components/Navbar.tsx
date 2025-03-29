@@ -27,7 +27,6 @@ function NavbarContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme, setTheme } = useTheme();
-  const showUserPostsOnly = searchParams.get("userPosts") === "true";
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [instagramLink, setInstagramLink] = useState(
     session?.user?.instagram || "",
@@ -163,30 +162,22 @@ function NavbarContent() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <NavMenu />
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </Button>
-          {session && (
-            <>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="user-posts"
-                  checked={showUserPostsOnly}
-                  onCheckedChange={handleToggleChange}
-                />
-                <Label htmlFor="user-posts">Show my thoughts only</Label>
-              </div>
+      <div className="w-full px-4">
+        <div className="flex h-14 items-center justify-between">
+          <NavMenu />
+          <div className="flex flex-1 items-center justify-end space-x-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+            {session && (
               <div className="flex items-center space-x-2">
                 <Switch
                   id="instagram-sharing"
@@ -207,9 +198,9 @@ function NavbarContent() {
                   </Label>
                 )}
               </div>
-            </>
-          )}
-          <UserMenu session={session} />
+            )}
+            <UserMenu session={session} />
+          </div>
         </div>
       </div>
 

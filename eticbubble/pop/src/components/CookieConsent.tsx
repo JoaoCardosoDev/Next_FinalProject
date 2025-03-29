@@ -24,20 +24,22 @@ export default function CookieConsent() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex items-center justify-between gap-4 px-4 py-6">
-        <p className="text-sm text-muted-foreground">
-          We use essential cookies to ensure the basic functionalities of this
-          website.{" "}
-          <Link
-            href="/privacy"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Learn more
-          </Link>
-        </p>
-        <Button onClick={acceptCookies} className="whitespace-nowrap">
-          Accept & Close
-        </Button>
+      <div className="w-full px-4 py-6">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            We use essential cookies to ensure the basic functionalities of this
+            website.{" "}
+            <Link
+              href="/privacy"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Learn more
+            </Link>
+          </p>
+          <Button onClick={acceptCookies} className="whitespace-nowrap">
+            Accept & Close
+          </Button>
+        </div>
       </div>
     </div>
   );
