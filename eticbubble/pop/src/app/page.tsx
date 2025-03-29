@@ -20,7 +20,6 @@ export default async function Home() {
       <PostProvider>
         <UserPostsProvider>
           <div>
-            <Navbar />
             <Hero />
             <main className="container mx-auto px-4 py-8">
               {session && <PostButton />}
