@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { usePostContext } from "@/contexts/PostContext";
 import { useSession } from "next-auth/react";
+import UserPostsToggle from "./UserPostsToggle";
 
 export default function PostButton() {
   const [title, setTitle] = useState("");
@@ -83,10 +84,21 @@ export default function PostButton() {
 
   return (
     <div className="mb-8">
-      <div className="mb-2 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          {postCount}/10 posts created
-        </p>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            className="dark:bg-accent dark:text-accent-foreground dark:hover:bg-accent/90"
+            size="lg"
+            disabled={postCount >= 10}
+            onClick={() => setIsOpen(true)}
+          >
+            {postCount >= 10 ? "Post limit reached" : "Share your thought"}
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            {postCount}/10 posts created
+          </span>
+        </div>
+        <UserPostsToggle />
       </div>
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>

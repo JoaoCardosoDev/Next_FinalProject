@@ -17,12 +17,7 @@ export default async function Home() {
           <div>
             <Hero />
             <main className="container mx-auto px-4 py-8">
-              {session && (
-                <>
-                  <PostButton />
-                  <UserPostsToggle />
-                </>
-              )}
+              {session && <PostButton />}
               <Pool />
             </main>
           </div>

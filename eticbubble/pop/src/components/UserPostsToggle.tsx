@@ -20,13 +20,13 @@ export default function UserPostsToggle() {
   };
 
   return (
-    <div className="mt-4 flex items-center space-x-2">
+    <div className="flex items-center gap-2">
       <Switch
         id="user-posts"
         checked={showUserPostsOnly}
         onCheckedChange={handleToggleChange}
       />
-      <Label htmlFor="user-posts">Show my thoughts only</Label>
+      <Label htmlFor="user-posts" className="text-sm text-muted-foreground">Show my thoughts only</Label>
     </div>
   );
 }
